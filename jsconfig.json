@@ -1,0 +1,21 @@
+{
+    "compilerOptions": {
+        "allowJs": true,
+        "checkJs": true,
+        "jsx": "preserve",
+        "module": "esnext",
+        "moduleResolution": "node",
+        "noErrorTruncation": true,
+        "noImplicitReturns": true,
+        "noUncheckedIndexedAccess": true,
+        "strict": true,
+        "target": "esnext"
+    },
+    "exclude": [
+        "**/node_modules/*",
+        "dist",
+        "node_modules",
+        "temp",
+        "tmp"
+    ]
+}
