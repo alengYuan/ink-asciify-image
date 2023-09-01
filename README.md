@@ -24,13 +24,20 @@ render(
             alt="Author's avatar"
         />
         <InkAsciifyImage
-            url="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.png"
+            url="./icon.png"
             width={40}
             height={40}
             tryCorrectAspectRatio
             renderInTwoBit
         />
-        <InkAsciifyImage url="C:/wrong/path" width={40} height={20} />
+        <InkAsciifyImage
+            url="https://github.githubassets.com/images/modules/logos_page/GitHub-Mark.pnggg"
+            width={40}
+            height={20}
+            alt={
+                'The wrong path, accidentally typed two extra "g" at the end of the URL'
+            }
+        />
     </Box>,
 )
 ```
@@ -54,7 +61,7 @@ const InkAsciifyImage: React.FC<{
 }>;
 ```
 
--   ⁰ [`url`]: URL of the rendered image, it's based on [Jimp](https://github.com/jimp-dev/jimp).
+-   ⁰ [`url`]: URL of the rendered image, supports loading local URL, or network URL based on HTTP, supported image formats include "jpeg", "png" and "bmp".
 -   ¹ [`width`]: Width of the rendered image.
 -   ² [`height`]: Height of the rendered image.
 -   ³ [`tryCorrectAspectRatio`]: Specifies whether to attempt to correct the aspect ratio of the rendered image, it often takes two ASCII characters to render a square like pixel point, this option would not eliminate the destructive effect on the original image's aspect ratio caused by the given `width` and `height`.
@@ -67,7 +74,7 @@ const InkAsciifyImage: React.FC<{
 /**
  * @throws {RangeError} Value of `width` or `height` must be natural number.
  */
-function asciifyImage(url:⁰ string, options: {
+function asciifyImage(url:⁰ string, { width, height, tryCorrectAspectRatio, renderInTwoBit }: {
     width:¹ number;
     height:² number;
     tryCorrectAspectRatio?:³ boolean;
@@ -75,7 +82,7 @@ function asciifyImage(url:⁰ string, options: {
 }):⁵ Promise<Array<string>>;
 ```
 
--   ⁰ [`url`]: URL of the rendered image, it's based on [Jimp](https://github.com/jimp-dev/jimp).
+-   ⁰ [`url`]: URL of the rendered image, supports loading local URL, or network URL based on HTTP, supported image formats include "jpeg", "png" and "bmp".
 -   ¹ [`width`]: Width of the rendered image.
 -   ² [`height`]: Height of the rendered image.
 -   ³ [`tryCorrectAspectRatio`]: Specifies whether to attempt to correct the aspect ratio of the rendered image, it often takes two ASCII characters to render a square like pixel point, this option would not eliminate the destructive effect on the original image's aspect ratio caused by the given `width` and `height`.
@@ -88,14 +95,14 @@ function asciifyImage(url:⁰ string, options: {
 <summary>
 <h3 style="display: inline;">Why is the size of this package so large?</h3>
 </summary>
-In order to prevent developers from encountering various problems that have to be solved when using this package if they prefer ES modules, by prepackaging core function, although possible errors are reduced, the total size of the package is very large due to the use of un-customized <a href="https://github.com/jimp-dev/jimp">Jimp</a>. If you're not happy with this, you can fork the source code of this package and do it however you want. But this package is not used in browsers, so why care about the size so much?
+In order to prevent developers from encountering various problems that have to be solved when using this package, if they prefer ES modules, and let the image in the component can be rendered synchronously. By prepackaging core function, although possible errors are reduced, the total size of the package is <del>very large due to the use of un-customized <a href="https://github.com/jimp-dev/jimp">Jimp</a></del> large due to the bundle of necessary dependencies. If you're not happy with this, you can fork the source code of this package and do it however you want. But this package is not used in browsers, so why care about the size so much?
 </details>
 
 <details open>
 <summary>
 <h3 style="display: inline;">Why is this package called its current name?</h3>
 </summary>
-This package is one component for <a href="https://github.com/vadimdemedes/ink">Ink</a>, and it's inspired by <a href="https://github.com/ajay-gandhi/asciify-image">asciify-image</a>.
+This package is one component for <a href="https://github.com/vadimdemedes/ink">Ink</a>, and it is inspired by <a href="https://github.com/ajay-gandhi/asciify-image">asciify-image</a>.
 </details>
 
 ## License

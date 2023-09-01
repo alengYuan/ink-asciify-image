@@ -1,9 +1,17 @@
 import { Chalk } from 'chalk'
-import jimp from 'jimp/es/index'
+import configureJimp from '@jimp/custom'
+import jpeg from '@jimp/jpeg'
+import png from '@jimp/png'
+import bmp from '@jimp/bmp'
+import resize from '@jimp/plugin-resize'
 import { getNumberArray } from './array.js'
 import { zero, one, two, three } from './number.js'
 
 const chalk = new Chalk({ level: 3 })
+const jimp = configureJimp({
+    types: [jpeg, png, bmp],
+    plugins: [resize],
+})
 
 /**
  * @param {string} url
@@ -16,13 +24,16 @@ const chalk = new Chalk({ level: 3 })
  * @returns {Promise<Array<string>>}
  * @throws {RangeError} Value of "`width`" or "`height`" must be natural number.
  */
-export const asciifyImage = async(url, options) => {
+export const asciifyImage = async(
+    url,
+    { width, height, tryCorrectAspectRatio, renderInTwoBit },
+) => {
     if (
         !(
-            Number.isInteger(options.width) &&
-            options.width > zero &&
-            Number.isInteger(options.height) &&
-            options.height > zero
+            Number.isInteger(width) &&
+            width > zero &&
+            Number.isInteger(height) &&
+            height > zero
         )
     ) {
         throw new RangeError(
@@ -33,11 +44,12 @@ export const asciifyImage = async(url, options) => {
     const mosaicAssetList =
         // eslint-disable-next-line max-len
         "....''''````^^^^\"\"\",,,,::::;;;;IIIllll!!!!iiii>>><<<<~~~~++++___----????]]]][[[}}}}{{{{1111)))((((||||////tttffffjjjjrrrrxxxnnnnuuuuvvvvccczzzzXXXXYYYYUUUJJJJCCCCLLLLQQQ0000OOOOZZZZmmmwwwwqqqqppppdddbbbbkkkkhhhhaaaoooo****####MMMWWWW&&&&8888%%%BBBB@@@@$$$$"
+    const maxAlpha = 255
 
     const image = await jimp.read(url)
     image.resize(
-        options.width,
-        Math.round(options.height / (options.tryCorrectAspectRatio ? two : one)),
+        width,
+        Math.round(height / (tryCorrectAspectRatio ? two : one)),
     )
 
     /**
@@ -58,14 +70,16 @@ export const asciifyImage = async(url, options) => {
 
             ascii = `${ascii}${
                 alpha
-                    ? options.renderInTwoBit
+                    ? renderInTwoBit
                         ? mosaicAssetList[
                             Math.floor(
-                                (three /
+                                three * alpha /
                                       // eslint-disable-next-line no-mixed-operators
-                                      (one / red + one / green + one / blue) *
-                                      alpha) **
-                                      (one / two),
+                                      (maxAlpha / red +
+                                          // eslint-disable-next-line no-mixed-operators
+                                          maxAlpha / green +
+                                          // eslint-disable-next-line no-mixed-operators
+                                          maxAlpha / blue),
                             )
                         ]
                         : chalk.rgb(red, green, blue)(mosaicAssetList[alpha])
@@ -76,9 +90,9 @@ export const asciifyImage = async(url, options) => {
         asciiList.push(ascii)
     }
 
-    if (options.tryCorrectAspectRatio) {
-        const filler = ' '.repeat(options.width)
-        const missingLineCount = options.height - image.bitmap.height
+    if (tryCorrectAspectRatio) {
+        const filler = ' '.repeat(width)
+        const missingLineCount = height - image.bitmap.height
 
         const topMissingLineCount = Math.round(missingLineCount / two)
         getNumberArray(topMissingLineCount).forEach(() => {

@@ -1,7 +1,6 @@
-import commonjs from '@rollup/plugin-commonjs'
-import json from '@rollup/plugin-json'
 import nodeResolve from '@rollup/plugin-node-resolve'
 import terser from '@rollup/plugin-terser'
+import cjsToMjs from 'rollup-plugin-cjs-es'
 
 export default {
     input: './src/utils/image.js',
@@ -11,8 +10,10 @@ export default {
         sourcemap: true,
     },
     plugins: [
-        json(),
-        commonjs(),
+        cjsToMjs({
+            cache: './buildCache4Regulate',
+            nested: true,
+        }),
         nodeResolve({
             exportConditions: ['node'],
             preferBuiltins: true,
